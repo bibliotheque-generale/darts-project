@@ -1,0 +1,203 @@
+
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+
+#loading data saved in workspace, international for example
+load("International_processed.RData")
+
+source("function_polynomial_finish.R") #still using their polynomical function
+
+##### 3) defining specifications ##############################
+
+sSpec_1 <- c("Finished~", "Win_poss_both")
+sSpec_2 <- c("Finished~", "Finish_poss_opp")
+sSpec_3 <- c("Finished~",
+             "Finish_poss_opp_1+Finish_poss_opp_2+Finish_poss_opp_3")
+sSpec_4 <- c("Finished~", "Win_poss_both")
+sSpec_5 <- c("Finished~",
+             "Win_poss_both+Finish_poss_opp+Win_poss_both:Finish_poss_opp")
+sSpec_6 <- c("Finished~",
+             "Win_poss_both+Finish_poss_opp_1+Win_poss_both:Finish_poss_opp_1+"
+             ,"Finish_poss_opp_2+Win_poss_both:Finish_poss_opp_2+"
+             ,"Finish_poss_opp_3+Win_poss_both:Finish_poss_opp_3")
+# flatten second element of sSpec_6
+sSpec_6[2] <- paste0(sSpec_6[-1], collapse="")
+
+##### 4) Polynomial selection ##############################
+source("function_polynomial_finish.R") #still using their poly function
+
+#calculating polynomials for each specification
+for (i in 1:6) {
+  spec    <- get(paste0("sSpec_", i))
+  out_name <- paste0("sPoly_finish_", i, "_full")
+  assign(
+    out_name,
+    MaxPolynomial_finish(fData_finish, iMaxPoly = 10, spec)
+  )
+}
+
+
+##### 5) Run bias-corrected fixed-effects logit ##########
+
+for (i in 1:6) {
+  # grab the i-th spec and the corresponding poly string
+  spec <- get(paste0("sSpec_", i))
+  poly <- get(paste0("sPoly_finish_", i, "_full"))
+  
+  # make formula
+  frm <- as.formula(
+    paste0(spec[1],spec[2],"+", poly," | (pgfe)"  )
+    )
+  
+  # estimate and bias-correct
+  fit <- bias_corr(
+    bife(frm, data = fData_finish)
+  )
+  
+  # assign to reg_finish_i_full
+  assign(
+    paste0("reg_finish_", i, "_full"),
+    fit )
+}
+
+
+
+##### 6) Average partial effects (APEs) ##################
+
+for (i in 1:6) {
+
+  # compute and summarize the APEs
+  ape_sum <- summary(get_APEs(
+    get(paste0("reg_finish_", i, "_full"))
+    ))
+  
+  # assign to APE_reg_finish_i_full
+  assign(
+    paste0("APE_reg_finish_", i, "_full"),
+    ape_sum
+  )
+}
+
+
+##### 7) Model info tables ###############################
+#–– Make all six Info_… data.frames ––
+make_Info <- function(reg, sPoly, nm) {
+  po <- max(as.numeric(na.omit(unlist(strsplit(gsub("[^0-9]", ",", sPoly), ",")))))
+  rsq <- 1 - reg$deviance / reg$null_deviance
+  obs_full <- reg$nobs["nobs_full"]
+  obs_eff  <- reg$nobs["nobs"]
+  df <- data.frame(
+    Polynomial_order       = po,
+    McFadden_pseudo_rsq    = rsq,
+    Observations           = obs_full,
+    Effective_observations = obs_eff
+  )
+  rownames(df) <- nm
+  df
+}
+
+Info_reg_finish_1_full <- make_Info(reg_finish_1_full, sPoly_finish_1_full, "reg_finish_1_full")
+Info_reg_finish_2_full <- make_Info(reg_finish_2_full, sPoly_finish_2_full, "reg_finish_2_full")
+Info_reg_finish_3_full <- make_Info(reg_finish_3_full, sPoly_finish_3_full, "reg_finish_3_full")
+Info_reg_finish_4_full <- make_Info(reg_finish_4_full, sPoly_finish_4_full, "reg_finish_4_full")
+Info_reg_finish_5_full <- make_Info(reg_finish_5_full, sPoly_finish_5_full, "reg_finish_5_full")
+Info_reg_finish_6_full <- make_Info(reg_finish_6_full, sPoly_finish_6_full, "reg_finish_6_full")
+
+
+##### 8) Dummies regressions for sum-of-effects tests ########
+reg_finish_5_full_dummies <- bias_corr(
+  bife(as.formula(
+    paste0(sSpec_5[1], "Incentive_combined+", sPoly_finish_5_full, "|(pgfe)")
+  ), data = fData_finish_first)
+)
+reg_finish_6_full_dummies <- bias_corr(
+  bife(as.formula(
+    paste0(sSpec_6[1], "Incentive_separate+", sPoly_finish_6_full, "|(pgfe)")
+  ), data = fData_finish_first)
+)
+
+APE_reg_finish_5_full_dummies <- get_APEs(reg_finish_5_full_dummies)
+APE_reg_finish_6_full_dummies <- get_APEs(reg_finish_6_full_dummies)
+
+##### 9) Build Table 2 ####################################
+library(knitr)
+format_coef <- function(est, p) {
+  stars <- ifelse(p < 0.001, "***",
+                  ifelse(p < 0.01,  "**",
+                         ifelse(p < 0.05,  "*",
+                                ifelse(p < 0.1,   ".", ""))))
+  sprintf("%.3f%s (%.3f)", est, stars, p)
+}
+get_val <- function(mat, v) {
+  if (v %in% rownames(mat)) {
+    est <- mat[v, "Estimate"]
+    p   <- mat[v, "Pr(> |z|)"]
+    format_coef(est, p)
+  } else {
+    "-"
+  }
+}
+
+ape3 <- as.matrix(APE_reg_finish_3_full)
+ape4 <- as.matrix(APE_reg_finish_4_full)
+ape6 <- as.matrix(APE_reg_finish_6_full)
+
+vars1 <- c("Finish_poss_opp_1","Finish_poss_opp_2","Finish_poss_opp_3")
+vars2 <- c("Win_poss_both")
+vars3 <- c(vars1,
+           "Win_poss_both",
+           "Win_poss_both:Finish_poss_opp_1",
+           "Win_poss_both:Finish_poss_opp_2",
+           "Win_poss_both:Finish_poss_opp_3")
+
+m1 <- sapply(vars1, get_val, mat = ape3)
+m2 <- sapply(vars2, get_val, mat = ape4)
+m3 <- sapply(vars3, get_val, mat = ape6)
+
+panel_d <- data.frame(
+  Variable = c(
+    "Opp. can finish with 1 dart",
+    "Opp. can finish with 2 darts",
+    "Opp. can finish with 3 darts",
+    "Both can win match",
+    "Opp. can finish with 1 dart × Both can win match",
+    "Opp. can finish with 2 darts × Both can win match",
+    "Opp. can finish with 3 darts × Both can win match",
+    "Player-match fixed effects",
+    "Polynomial throw number (order)",
+    "McFadden pseudo R-squared",
+    "Observations"
+  ),
+  `Model 1` = c(
+    m1,
+    rep("-", 4),
+    "Yes",
+    Info_reg_finish_3_full$Polynomial_order,
+    round(Info_reg_finish_3_full$McFadden_pseudo_rsq, 3),
+    format(Info_reg_finish_3_full$Observations, big.mark=",")
+  ),
+  `Model 2` = c(
+    rep("-", 3),
+    m2,
+    rep("-", 3),
+    "Yes",
+    Info_reg_finish_4_full$Polynomial_order,
+    round(Info_reg_finish_4_full$McFadden_pseudo_rsq, 3),
+    format(Info_reg_finish_4_full$Observations, big.mark=",")
+  ),
+  `Model 3` = c(
+    m3[1:3],
+    m3[4],
+    m3[5:7],
+    "Yes",
+    Info_reg_finish_6_full$Polynomial_order,
+    round(Info_reg_finish_6_full$McFadden_pseudo_rsq, 3),
+    format(Info_reg_finish_6_full$Observations, big.mark=",")
+  ),
+  check.names = FALSE
+)
+
+knitr::kable(
+  panel_d,
+  caption = "Table 2: Regression Results for the Likelihood of Finishing"
+)
+
