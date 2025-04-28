@@ -1,4 +1,4 @@
-
+#set working directory to wherever the R file is saved
 setwd(dirname(rstudioapi::getSourceEditorContext()$path))
 
 #loading data saved in workspace, international for example
@@ -23,7 +23,6 @@ sSpec_6 <- c("Finished~",
 sSpec_6[2] <- paste0(sSpec_6[-1], collapse="")
 
 ##### 4) Polynomial selection ##############################
-source("function_polynomial_finish.R") #still using their poly function
 
 #calculating polynomials for each specification
 for (i in 1:6) {
