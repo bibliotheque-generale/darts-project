@@ -137,6 +137,9 @@ for (i in 1:length(Names)) {
       table_collect,
       info_table
     )
+
+  #saving created data before deletion for later use
+  save(fData_finish, fData_finish_first, file = paste0(Names[i], "_processed.RData"))
   
   # Remove spent objects
   rm(info_table, fData, fData_finish, fData_finish_first)
