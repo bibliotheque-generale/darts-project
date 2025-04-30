@@ -1,0 +1,37 @@
+"Panel","Coefficient","Model 1","Model 2","Model 3","Model 4","Model 5","Model 6"
+"International","Decisive leg",-0.025,NA,NA,-0.006,0.026,0.026
+"International","Opp. can finish",NA,0.002,NA,NA,0.003,NA
+"International","Opp. can finish with 1 dart",NA,NA,-0.005,NA,NA,-0.003
+"International","Opp. can finish with 2 darts",NA,NA,0.01,NA,NA,0.011
+"International","Opp. can finish with 3 darts",NA,NA,-0.001,NA,NA,0
+"International","Decisive leg x Opp. can finish",NA,NA,NA,NA,-0.036,NA
+"International","Decisive leg x Opp. can finish with 1 dart",NA,NA,NA,NA,NA,-0.048
+"International","Decisive leg x Opp. can finish with 2 darts",NA,NA,NA,NA,NA,-0.033
+"International","Decisive leg x Opp. can finish with 3 darts",NA,NA,NA,NA,NA,-0.008
+"BICC","Decisive leg",-0.077,NA,NA,-0.059,-0.007,-0.008
+"BICC","Opp. can finish",NA,0.003,NA,NA,0.007,NA
+"BICC","Opp. can finish with 1 dart",NA,NA,0.001,NA,NA,0.007
+"BICC","Opp. can finish with 2 darts",NA,NA,0.003,NA,NA,0.006
+"BICC","Opp. can finish with 3 darts",NA,NA,0.006,NA,NA,0.008
+"BICC","Decisive leg x Opp. can finish",NA,NA,NA,NA,0,NA
+"BICC","Decisive leg x Opp. can finish with 1 dart",NA,NA,NA,NA,NA,0
+"BICC","Decisive leg x Opp. can finish with 2 darts",NA,NA,NA,NA,NA,-0.079
+"BICC","Decisive leg x Opp. can finish with 3 darts",NA,NA,NA,NA,NA,-0.042
+"Super League","Decisive leg",-0.035,NA,NA,-0.035,-0.001,-0.001
+"Super League","Opp. can finish",NA,0.003,NA,NA,0.005,NA
+"Super League","Opp. can finish with 1 dart",NA,NA,0.004,NA,NA,0.007
+"Super League","Opp. can finish with 2 darts",NA,NA,-0.003,NA,NA,-0.002
+"Super League","Opp. can finish with 3 darts",NA,NA,0.009,NA,NA,0.013
+"Super League","Decisive leg x Opp. can finish",NA,NA,NA,NA,-0.039,NA
+"Super League","Decisive leg x Opp. can finish with 1 dart",NA,NA,NA,NA,NA,-0.052
+"Super League","Decisive leg x Opp. can finish with 2 darts",NA,NA,NA,NA,NA,-0.013
+"Super League","Decisive leg x Opp. can finish with 3 darts",NA,NA,NA,NA,NA,-0.055
+"Youth","Decisive leg",-0.048,NA,NA,-0.028,0.007,0.007
+"Youth","Opp. can finish",NA,-0.032,NA,NA,-0.028,NA
+"Youth","Opp. can finish with 1 dart",NA,NA,-0.045,NA,NA,-0.039
+"Youth","Opp. can finish with 2 darts",NA,NA,-0.03,NA,NA,-0.03
+"Youth","Opp. can finish with 3 darts",NA,NA,-0.02,NA,NA,-0.02
+"Youth","Decisive leg x Opp. can finish",NA,NA,NA,NA,0,NA
+"Youth","Decisive leg x Opp. can finish with 1 dart",NA,NA,NA,NA,NA,-0.065
+"Youth","Decisive leg x Opp. can finish with 2 darts",NA,NA,NA,NA,NA,-0.016
+"Youth","Decisive leg x Opp. can finish with 3 darts",NA,NA,NA,NA,NA,-0.01
