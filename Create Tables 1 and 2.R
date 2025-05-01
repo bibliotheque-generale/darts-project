@@ -353,7 +353,14 @@ table2_output <- table2_collect %>%
     `Model 4` = round(`Model 4`, digits = 3),
     `Model 5` = round(`Model 5`, digits = 3),
     `Model 6` = round(`Model 6`, digits = 3),
+  ) %>%
+  mutate(
+    across(
+      everything(),
+      ~ ifelse(is.na(.), "", .)
+    )
   )
+
 
 
 rm(table2_collect)
