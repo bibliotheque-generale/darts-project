@@ -211,20 +211,89 @@ for (i in 1:length(Names)) {
   reg_finish_6_full <- bias_corr(bife(as.formula(paste0(sSpec_6[1],sSpec_6[2],"+",sPoly_finish_6_full,"|(pgfe)")),data=fData_finish_first))
   
   # Get average partial effects for each regression
-  APE_reg_finish_1_full <- summary(get_APEs(reg_finish_1_full))
-  APE_reg_finish_2_full <- summary(get_APEs(reg_finish_2_full))
-  APE_reg_finish_3_full <- summary(get_APEs(reg_finish_3_full))
-  APE_reg_finish_4_full <- summary(get_APEs(reg_finish_4_full))
-  APE_reg_finish_5_full <- summary(get_APEs(reg_finish_5_full))
-  APE_reg_finish_6_full <- summary(get_APEs(reg_finish_6_full))
+   ape1 <- get_APEs(reg_finish_1_full)
+  ape_summary1 <- summary(ape1)
+  se1 <- ape_summary1[, "Std. error"]
+  coef1 <- ape_summary1[, "Estimate"]
+  pval1 <- 2 * (1 - pnorm(abs(coef1 / se1)))  # two-sided p-value
+  
+  # Add stars
+  stars1 <- ifelse(pval1 < 0.01, "***",
+                   ifelse(pval1 < 0.05, "**",
+                          ifelse(pval1 < 0.10, "*", "")))
+  
+  # Combine into formatted string
+  coef1_starred <- paste0(round(coef1, 3), stars1)
+  names(coef1_starred) <- rownames(ape_summary1)
+  ###
+  # APE 2
+  ape2 <- get_APEs(reg_finish_2_full)
+  ape_summary2 <- summary(ape2)
+  coef2 <- ape_summary2[, "Estimate"]
+  se2 <- ape_summary2[, "Std. error"]
+  pval2 <- 2 * (1 - pnorm(abs(coef2 / se2)))
+  stars2 <- ifelse(pval2 < 0.01, "***",
+                   ifelse(pval2 < 0.05, "**",
+                          ifelse(pval2 < 0.10, "*", "")))
+  coef2_starred <- paste0(round(coef2, 3), stars2)
+  names(coef2_starred) <- rownames(ape_summary2)
+  
+  # APE 3
+  ape3 <- get_APEs(reg_finish_3_full)
+  ape_summary3 <- summary(ape3)
+  coef3 <- ape_summary3[, "Estimate"]
+  se3 <- ape_summary3[, "Std. error"]
+  pval3 <- 2 * (1 - pnorm(abs(coef3 / se3)))
+  stars3 <- ifelse(pval3 < 0.01, "***",
+                   ifelse(pval3 < 0.05, "**",
+                          ifelse(pval3 < 0.10, "*", "")))
+  coef3_starred <- paste0(round(coef3, 3), stars3)
+  names(coef3_starred) <- rownames(ape_summary3)
+  
+  # APE 4
+  ape4 <- get_APEs(reg_finish_4_full)
+  ape_summary4 <- summary(ape4)
+  coef4 <- ape_summary4[, "Estimate"]
+  se4 <- ape_summary4[, "Std. error"]
+  pval4 <- 2 * (1 - pnorm(abs(coef4 / se4)))
+  stars4 <- ifelse(pval4 < 0.01, "***",
+                   ifelse(pval4 < 0.05, "**",
+                          ifelse(pval4 < 0.10, "*", "")))
+  coef4_starred <- paste0(round(coef4, 3), stars4)
+  names(coef4_starred) <- rownames(ape_summary4)
+  
+  # APE 5
+  ape5 <- get_APEs(reg_finish_5_full)
+  ape_summary5 <- summary(ape5)
+  coef5 <- ape_summary5[, "Estimate"]
+  se5 <- ape_summary5[, "Std. error"]
+  pval5 <- 2 * (1 - pnorm(abs(coef5 / se5)))
+  stars5 <- ifelse(pval5 < 0.01, "***",
+                   ifelse(pval5 < 0.05, "**",
+                          ifelse(pval5 < 0.10, "*", "")))
+  coef5_starred <- paste0(round(coef5, 3), stars5)
+  names(coef5_starred) <- rownames(ape_summary5)
+  
+  # APE 6
+  ape6 <- get_APEs(reg_finish_6_full)
+  ape_summary6 <- summary(ape6)
+  coef6 <- ape_summary6[, "Estimate"]
+  se6 <- ape_summary6[, "Std. error"]
+  pval6 <- 2 * (1 - pnorm(abs(coef6 / se6)))
+  stars6 <- ifelse(pval6 < 0.01, "***",
+                   ifelse(pval6 < 0.05, "**",
+                          ifelse(pval6 < 0.10, "*", "")))
+  coef6_starred <- paste0(round(coef6, 3), stars6)
+  names(coef6_starred) <- rownames(ape_summary6)
   
   # Extract vector of coefficients for each model
-  model1 <- c(APE_reg_finish_1_full[1], NA, NA, NA, NA, NA, NA, NA, NA)
-  model2 <- c(NA, APE_reg_finish_2_full[1], NA, NA, NA, NA, NA, NA, NA)
-  model3 <- c(NA, NA, APE_reg_finish_3_full[1], APE_reg_finish_3_full[2], APE_reg_finish_3_full[3], NA, NA, NA, NA)
-  model4 <- c(APE_reg_finish_4_full[1], NA, NA, NA, NA, NA, NA, NA, NA)
-  model5 <- c(APE_reg_finish_5_full[1], APE_reg_finish_5_full[2], NA, NA, NA, APE_reg_finish_5_full[6], NA, NA, NA)
-  model6 <- c(APE_reg_finish_6_full[1], NA, APE_reg_finish_6_full[2], APE_reg_finish_6_full[3], APE_reg_finish_6_full[4], NA, APE_reg_finish_6_full[8], APE_reg_finish_6_full[9], APE_reg_finish_6_full[10])
+  model1 <- c(coef1_starred[1], NA, NA, NA, NA, NA, NA, NA, NA)
+  model2 <- c(NA, coef2_starred[1], NA, NA, NA, NA, NA, NA, NA)
+  model3 <- c(NA, NA, coef3_starred[1], coef3_starred[2], coef3_starred[3], NA, NA, NA, NA)
+  model4 <- c(coef4_starred[1], NA, NA, NA, NA, NA, NA, NA, NA)
+  model5 <- c(coef5_starred[1], coef5_starred[2], NA, NA, NA, coef5_starred[6], NA, NA, NA)
+  model6 <- c(coef6_starred[1], NA,coef6_starred[2], coef6_starred[3], coef6_starred[4], NA, coef6_starred[8], coef6_starred[9], coef6_starred[10])
+  
   
   # Compile panel table of coefficients
   coefficients <-
@@ -346,22 +415,34 @@ table2_output <- table2_collect %>%
     `Model 6`,
   ) %>%
   mutate(
-    Coefficient,
-    `Model 1` = round(`Model 1`, digits = 3),
-    `Model 2` = round(`Model 2`, digits = 3),
-    `Model 3` = round(`Model 3`, digits = 3),
-    `Model 4` = round(`Model 4`, digits = 3),
-    `Model 5` = round(`Model 5`, digits = 3),
-    `Model 6` = round(`Model 6`, digits = 3),
-  ) %>%
-  mutate(
     across(
       everything(),
       ~ ifelse(is.na(.), "", .)
     )
   )
+stars_row <- table2_output[1, ]
+stars_row[] <- ""  # Empty all cells
+stars_row$Panel <- ""
+stars_row$Coefficient <- "Significance"
+stars_row$`Model 1` <- "*** p<0.01, ** p<0.05, * p<0.1"
 
+fe_row <- stars_row
+fe_row$Coefficient <- "Fixed Effects"
+fe_row$`Model 1` <- "Yes"
+fe_row$`Model 2` <- "Yes"
+fe_row$`Model 3` <- "Yes"
+fe_row$`Model 4` <- "Yes"
+fe_row$`Model 5` <- "Yes"
+fe_row$`Model 6` <- "Yes"
 
+# Bind all rows to final output
+table2_output <- bind_rows(
+  table2_output,
+  stars_row,
+  fe_row,
+  obs_row,
+  r2_row  # Comment out if not using R²
+)
 
 rm(table2_collect)
 
